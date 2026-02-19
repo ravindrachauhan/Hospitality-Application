@@ -50,8 +50,8 @@ export default function Dashboard() {
               {new Date().toLocaleDateString('en-IN', { weekday:'long', year:'numeric', month:'long', day:'numeric' })}
             </div>
             <div className="header-user">
-              <div className="header-avatar">{user?.name?.charAt(0)}</div>
-              <span>{user?.name}</span>
+              <div className="header-avatar">{user?.full_name?.charAt(0)}</div>
+              <span>{user?.full_name}</span>
             </div>
           </div>
         </header>

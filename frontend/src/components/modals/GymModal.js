@@ -93,7 +93,8 @@ export default function GymModal() {
 
   const fetchActivities = useCallback(async () => {
     setLoading(true);
-    try { const res = await gymService.getAll(); setActivities(res.data); }
+    try { const res = await gymService.getAll(); 
+      setActivities(res.data.data || res.data || []); }
     catch (e) { console.error(e); }
     setLoading(false);
   }, []);
@@ -105,11 +106,11 @@ export default function GymModal() {
     catch (e) { alert('Error deleting activity'); }
     setDelConfirm(null);
   };
-
+ 
   const filtered = activities.filter(a =>
-    a.name.toLowerCase().includes(search.toLowerCase()) ||
-    a.category?.toLowerCase().includes(search.toLowerCase()) ||
-    a.trainer?.toLowerCase().includes(search.toLowerCase())
+  (a.name || '').toLowerCase().includes(search.toLowerCase()) ||
+  (a.category || '').toLowerCase().includes(search.toLowerCase()) ||
+  (a.trainer || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (

@@ -63,7 +63,8 @@ function BillingForm({ initial, onSave, onClose }) {
   const [error, setError] = useState('');
 
   useEffect(() => {
-    customerService.getAll().then(r => setCustomers(r.data)).catch(() => {});
+    // customerService.getAll().then(r => setCustomers(r.data)).catch(() => {});
+    customerService.getAll().then(r => setCustomers(r.data.data || r.data || []));
   }, []);
 
   const handleSubmit = async (e) => {
@@ -152,7 +153,8 @@ export default function BillingModal() {
 
   const fetchBills = useCallback(async () => {
     setLoading(true);
-    try { const res = await billingService.getAll(); setBills(res.data); }
+    try { const res = await billingService.getAll(); 
+      setBills(res.data.data || res.data || []); }
     catch (e) { console.error(e); }
     setLoading(false);
   }, []);

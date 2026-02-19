@@ -15,7 +15,8 @@ export default function OrdersModal() {
 
   const fetchOrders = useCallback(async () => {
     setLoading(true);
-    try { const res = await orderService.getAll(); setOrders(res.data); }
+    try { const res = await orderService.getAll(); 
+      setOrders(res.data.data || res.data || []); }
     catch (e) { console.error(e); }
     setLoading(false);
   }, []);

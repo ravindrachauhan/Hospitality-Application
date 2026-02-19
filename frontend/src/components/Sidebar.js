@@ -102,10 +102,10 @@ export default function Sidebar({ activeSection, onSectionChange }) {
 
       <div className="sidebar-footer">
         <div className="user-info">
-          <div className="user-avatar">{user?.name?.charAt(0)?.toUpperCase()}</div>
+          <div className="user-avatar">{user?.full_name?.charAt(0)?.toUpperCase()}</div>
           <div>
-            <div className="user-name">{user?.name}</div>
-            <div className="user-role">{user?.role}</div>
+            <div className="user-name">{user?.full_name}</div>
+            <div className="user-role">{user?.role_name}</div>
           </div>
         </div>
         <button className="logout-btn" onClick={logout} title="Logout">

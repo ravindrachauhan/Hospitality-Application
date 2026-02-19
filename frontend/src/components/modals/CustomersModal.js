@@ -104,7 +104,8 @@ export default function CustomersModal() {
     setLoading(true);
     try {
       const res = await customerService.getAll();
-      setCustomers(res.data);
+      // setCustomers(res.data);
+      setCustomers(res.data.data || res.data || []);
     } catch (e) { console.error(e); }
     setLoading(false);
   }, []);
@@ -120,9 +121,9 @@ export default function CustomersModal() {
   };
 
   const filtered = customers.filter(c =>
-    c.name.toLowerCase().includes(search.toLowerCase()) ||
-    c.email?.toLowerCase().includes(search.toLowerCase()) ||
-    c.phone?.includes(search)
+  (c.name || '').toLowerCase().includes(search.toLowerCase()) ||
+  (c.email || '').toLowerCase().includes(search.toLowerCase()) ||
+  (c.phone || '').includes(search)
   );
 
   return (

@@ -80,7 +80,9 @@ export default function ProductsModal() {
 
   const fetchProducts = useCallback(async () => {
     setLoading(true);
-    try { const res = await productService.getAll(); setProducts(res.data); }
+    try { const res = await productService.getAll(); 
+      setProducts(res.data.data || res.data || []);
+    }
     catch (e) { console.error(e); }
     setLoading(false);
   }, []);
@@ -94,8 +96,8 @@ export default function ProductsModal() {
   };
 
   const filtered = products.filter(p =>
-    p.name.toLowerCase().includes(search.toLowerCase()) ||
-    p.category?.toLowerCase().includes(search.toLowerCase())
+  (p.name || '').toLowerCase().includes(search.toLowerCase()) ||
+  (p.category || '').toLowerCase().includes(search.toLowerCase())
   );
 
   return (

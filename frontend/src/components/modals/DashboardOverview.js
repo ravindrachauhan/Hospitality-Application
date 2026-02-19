@@ -15,9 +15,20 @@ export default function DashboardOverview() {
       billingService.getAll(),
       gymService.getAll(),
     ]).then(([c, p, o, b, g]) => {
-      const revenue = b.data.filter(x => x.payment_status === 'paid').reduce((sum, x) => sum + parseFloat(x.total_amount || 0), 0);
-      setStats({ customers: c.data.length, products: p.data.length, orders: o.data.length, revenue, activities: g.data.length });
-      setRecentOrders(o.data.slice(0, 5));
+      // Change c.data to c.data.data for all services
+      const customers = c.data.data || c.data || [];
+      const products  = p.data.data || p.data || [];
+      const orders    = o.data.data || o.data || [];
+      const billing   = b.data.data || b.data || [];
+      const activities = g.data.data || g.data || [];
+      const revenue = billing.filter(x => x.payment_status === 'paid').reduce((sum, x) => sum + parseFloat(x.total_amount || 0), 0);
+      setStats({ 
+        customers: customers.length, 
+        products: products.length, 
+        orders: orders.length, 
+        revenue, 
+        activities: activities.length });
+      setRecentOrders(orders.slice(0, 5));
     }).catch(console.error).finally(() => setLoading(false));
   }, []);
 
