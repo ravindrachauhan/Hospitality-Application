@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>FitPro Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --p:#FF6B35;--pd:#E5551E;--pl:#FF8C5A;
+  --sbg:#0F0F23;--bg:#F8F7FF;--tx:#1A1A2E;--tx2:#6B7280;--txm:#9CA3AF;--bd:#E5E7EB;
+  --ok:#10B981;--er:#EF4444;--inf:#3B82F6;
+  --r:12px;--rs:8px;
+  --sb:240px;
+}
+body{font-family:"DM Sans",sans-serif;background:var(--bg);color:var(--tx);line-height:1.6;-webkit-font-smoothing:antialiased}
+@keyframes fl{0%,100%{transform:translate(0,0) scale(1)}33%{transform:translate(20px,-20px) scale(1.05)}66%{transform:translate(-10px,10px) scale(.95)}}
+@keyframes su{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes fd{from{opacity:0}to{opacity:1}}
+
+/* ===== LOGIN ===== */
+#LP{min-height:100vh;display:grid;grid-template-columns:1fr 1fr;position:relative;overflow:hidden}
+.lbg{position:fixed;inset:0;background:linear-gradient(135deg,#0F0F23,#1A1A3E 50%,#0F0F23);z-index:-1}
+.blob{position:absolute;border-radius:50%;filter:blur(80px);opacity:.15;animation:fl 8s ease-in-out infinite}
+.b1{width:500px;height:500px;background:var(--p);top:-100px;left:-100px}
+.b2{width:400px;height:400px;background:#6366F1;top:50%;right:-100px;animation-delay:3s}
+.b3{width:300px;height:300px;background:var(--pl);bottom:-50px;left:40%;animation-delay:6s}
+.lbrand{display:flex;flex-direction:column;justify-content:center;padding:60px;color:#fff}
+.blogo{font-size:64px;margin-bottom:16px}
+.bname{font-family:"Syne",sans-serif;font-size:56px;font-weight:800;line-height:1;margin-bottom:8px;background:linear-gradient(135deg,#FF6B35,#FF8C5A);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.btag{font-size:18px;color:rgba(255,255,255,.6);margin-bottom:48px;font-weight:300}
+.bfeat{display:flex;flex-direction:column;gap:12px}
+.bfi{color:rgba(255,255,255,.8);font-size:15px;padding:10px 16px;background:rgba(255,255,255,.06);border-radius:10px;border:1px solid rgba(255,255,255,.08)}
+.lcwrap{display:flex;align-items:center;justify-content:center;padding:40px}
+.lcard{background:#fff;border-radius:24px;padding:48px;width:100%;max-width:420px;box-shadow:0 24px 80px rgba(0,0,0,.4);animation:su .5s ease}
+.lcard h2{font-family:"Syne",sans-serif;font-size:28px;font-weight:800;margin-bottom:6px}
+.lcard p{color:var(--tx2);font-size:15px;margin-bottom:28px}
+.fg{margin-bottom:16px}
+.fl{display:block;font-size:13px;font-weight:500;color:var(--tx2);margin-bottom:6px}
+.fc{width:100%;padding:10px 14px;border:1.5px solid var(--bd);border-radius:var(--rs);font-family:"DM Sans",sans-serif;font-size:14px;transition:border-color .2s;outline:none;background:#fff}
+.fc:focus{border-color:var(--p);box-shadow:0 0 0 3px rgba(255,107,53,.1)}
+select.fc{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%278%27%3E%3Cpath fill=%27%236B7280%27 d=%27M1 1l5 5 5-5%27/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;padding-right:32px}
+textarea.fc{resize:vertical;min-height:70px}
+.lbtn{width:100%;padding:13px;background:var(--p);color:#fff;border:none;border-radius:10px;font-size:15px;font-weight:500;cursor:pointer;transition:all .2s;font-family:"DM Sans",sans-serif}
+.lbtn:hover{background:var(--pd);transform:translateY(-1px)}
+.lhint{text-align:center;margin-top:20px;padding:10px;background:var(--bg);border-radius:8px;font-size:12px;color:var(--txm)}
+.lerr{background:#FEE2E2;color:#991B1B;border:1px solid #FECACA;padding:10px 14px;border-radius:8px;font-size:13px;margin-bottom:12px;display:none}
+
+/* ===== DASHBOARD LAYOUT ===== */
+#DP{display:none;min-height:100vh}
+.lay{display:flex;min-height:100vh}
+
+/* ===== SIDEBAR ===== */
+.sb{width:var(--sb);min-height:100vh;background:var(--sbg);display:flex;flex-direction:column;position:fixed;top:0;left:0;z-index:200;box-shadow:4px 0 20px rgba(0,0,0,.3);transition:transform .3s ease}
+.sblogo{display:flex;align-items:center;gap:12px;padding:20px;border-bottom:1px solid rgba(255,255,255,.06)}
+.ln{font-family:"Syne",sans-serif;font-size:18px;font-weight:800;color:#fff;line-height:1}
+.ls{font-size:10px;color:rgba(255,255,255,.4);text-transform:uppercase;letter-spacing:1px}
+.sbnav{flex:1;padding:12px 8px;overflow-y:auto}
+.ng{margin-bottom:2px}
+.ngh{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;color:rgba(255,255,255,.5);cursor:pointer;border-radius:8px;transition:all .2s;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500}
+.ngh:hover{color:rgba(255,255,255,.9);background:rgba(255,255,255,.05)}
+.nix{font-size:16px;width:20px;text-align:center;flex-shrink:0;pointer-events:none}
+.nl{flex:1;text-align:left;pointer-events:none}
+.chev{font-size:18px;transition:transform .2s;display:inline-block;pointer-events:none}
+.chev.op{transform:rotate(90deg)}
+.nch{padding-left:8px;margin-top:2px;overflow:hidden;max-height:0;transition:max-height .3s ease}
+.nch.op{max-height:300px}
+.ni{width:100%;display:flex;align-items:center;gap:10px;padding:10px 12px;background:none;border:none;color:rgba(255,255,255,.55);cursor:pointer;border-radius:8px;transition:all .2s;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;margin-bottom:2px}
+.ni:hover{color:#fff;background:rgba(255,255,255,.07)}
+.ni.ac{color:#fff !important;background:var(--p) !important;box-shadow:0 4px 12px rgba(255,107,53,.35)}
+.sbfoot{padding:16px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px}
+.uav{width:34px;height:34px;border-radius:50%;background:var(--p);color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;flex-shrink:0}
+.un{color:#fff;font-size:13px;font-weight:500}
+.ur{color:rgba(255,255,255,.4);font-size:11px}
+.lgbtn{background:rgba(255,255,255,.06);border:none;color:rgba(255,255,255,.5);width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;flex-shrink:0;font-size:16px}
+.lgbtn:hover{background:var(--er);color:#fff}
+
+/* Overlay for mobile sidebar */
+.sb-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:150}
+.sb-overlay.show{display:block}
+
+/* ===== MAIN CONTENT ===== */
+.mn{flex:1;margin-left:var(--sb);display:flex;flex-direction:column;min-height:100vh;transition:margin-left .3s ease}
+
+/* ===== TOPBAR ===== */
+.tb{background:#fff;padding:14px 24px;border-bottom:1px solid var(--bd);display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(0,0,0,.05);gap:12px}
+.tb-left{display:flex;align-items:center;gap:12px;min-width:0}
+.hamburger{display:none;background:none;border:none;cursor:pointer;padding:6px;border-radius:8px;color:var(--tx2);font-size:20px;flex-shrink:0}
+.hamburger:hover{background:var(--bg)}
+.tbt{font-family:"Syne",sans-serif;font-size:18px;font-weight:800;line-height:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tbs{font-size:11px;color:var(--txm);white-space:nowrap}
+.tbr{display:flex;align-items:center;gap:12px;flex-shrink:0}
+.tbd{font-size:12px;color:var(--tx2);white-space:nowrap}
+
+/* ===== CONTENT AREA ===== */
+.ct{flex:1;padding:24px;animation:fd .3s ease}
+.sec{display:none}.sec.ac{display:block}
+.sh{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:20px;gap:12px;flex-wrap:wrap}
+.st{font-family:"Syne",sans-serif;font-size:20px;font-weight:800}
+.ss{color:var(--tx2);font-size:13px;margin-top:2px}
+.sa{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+
+/* ===== BUTTONS ===== */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border:none;border-radius:var(--rs);font-family:"DM Sans",sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .2s;white-space:nowrap}
+.bp{background:var(--p);color:#fff}.bp:hover{background:var(--pd);transform:translateY(-1px)}
+.bs{background:#fff;color:var(--tx);border:1px solid var(--bd)}.bs:hover{background:var(--bg)}
+.bd2{background:var(--er);color:#fff}.bd2:hover{background:#DC2626}
+.bg2{background:var(--ok);color:#fff}.bg2:hover{background:#059669}
+.bic{width:30px;height:30px;border:none;cursor:pointer;border-radius:6px;display:inline-flex;align-items:center;justify-content:center;transition:all .2s;font-size:14px;background:transparent}
+.bic:hover{transform:scale(1.1)}
+
+/* ===== BADGES ===== */
+.bdg{display:inline-block;padding:2px 10px;border-radius:20px;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;white-space:nowrap}
+.bsuc{background:#D1FAE5;color:#065F46}.bwrn{background:#FEF3C7;color:#92400E}.berr{background:#FEE2E2;color:#991B1B}.binf{background:#DBEAFE;color:#1E40AF}.bbsc{background:#F3F4F6;color:#374151}.bpre{background:#EDE9FE;color:#5B21B6}.bvip{background:#FEF3C7;color:#92400E}
+
+/* ===== CARDS ===== */
+.cd{background:#fff;border-radius:var(--r);box-shadow:0 4px 24px rgba(0,0,0,.08);padding:20px}
+.cdh{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid var(--bd)}
+.cdt{font-family:"Syne",sans-serif;font-size:16px;font-weight:700}
+.tc{overflow-x:auto;-webkit-overflow-scrolling:touch;border-radius:var(--r)}
+table{width:100%;border-collapse:collapse;font-size:14px;min-width:500px}
+thead th{background:var(--bg);padding:10px 14px;text-align:left;font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--tx2);border-bottom:2px solid var(--bd);white-space:nowrap}
+tbody td{padding:10px 14px;border-bottom:1px solid var(--bd);vertical-align:middle}
+tbody tr:hover{background:var(--bg)}
+tbody tr:last-child td{border-bottom:none}
+.ab{display:flex;gap:4px;align-items:center}
+
+/* ===== STAT CARDS ===== */
+.sg{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:14px;margin-bottom:20px}
+.sc{background:#fff;border-radius:var(--r);padding:16px;box-shadow:0 4px 24px rgba(0,0,0,.08);display:flex;align-items:center;gap:14px}
+.si{width:44px;height:44px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.sv{font-family:"Syne",sans-serif;font-size:22px;font-weight:800;line-height:1}
+.sl{font-size:11px;color:var(--tx2);margin-top:3px}
+
+/* ===== SEARCH ===== */
+.srch{position:relative;display:flex;align-items:center}
+.srch input{width:200px;padding:8px 12px 8px 34px;border:1.5px solid var(--bd);border-radius:var(--rs);font-size:13px;outline:none;font-family:"DM Sans",sans-serif}
+.srch input:focus{border-color:var(--p)}
+.sico{position:absolute;left:9px;color:var(--txm);pointer-events:none;font-size:13px}
+
+/* ===== GYM CARDS ===== */
+.gg{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.ac2{background:#fff;border-radius:var(--r);padding:18px;box-shadow:0 4px 24px rgba(0,0,0,.08);border-top:4px solid var(--p);transition:transform .2s}
+.ac2:hover{transform:translateY(-2px)}
+.ach{display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px}
+.anam{font-family:"Syne",sans-serif;font-size:15px;font-weight:700}
+.acat{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600}
+.ainf{display:flex;flex-direction:column;gap:5px;font-size:13px;color:var(--tx2)}
+.af{margin-top:12px;padding-top:12px;border-top:1px solid var(--bd);display:flex;justify-content:space-between;align-items:center}
+
+/* ===== MODAL ===== */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.5);backdrop-filter:blur(4px);z-index:1000;display:flex;align-items:center;justify-content:center;padding:16px;animation:fd .2s ease}
+.mb{background:#fff;border-radius:var(--r);width:100%;max-width:620px;max-height:92vh;overflow-y:auto;box-shadow:0 8px 40px rgba(0,0,0,.2);animation:su .25s ease}
+.mh{display:flex;align-items:center;justify-content:space-between;padding:18px 22px;border-bottom:1px solid var(--bd);position:sticky;top:0;background:#fff;z-index:1}
+.mt2{font-family:"Syne",sans-serif;font-size:17px;font-weight:700}
+.mbod{padding:20px}
+.mf{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px;border-top:1px solid var(--bd);flex-wrap:wrap}
+.mc{background:none;border:none;cursor:pointer;padding:6px 10px;color:var(--txm);border-radius:6px;font-size:16px;line-height:1}
+.mc:hover{background:var(--bg)}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.dg{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:16px}
+.di{background:var(--bg);border-radius:10px;padding:12px 14px}
+.dl{display:block;font-size:11px;color:var(--txm);text-transform:uppercase;letter-spacing:.5px;margin-bottom:4px}
+.dav{width:68px;height:68px;border-radius:50%;background:linear-gradient(135deg,#FF6B35,#FF8C5A);color:#fff;font-size:26px;font-weight:700;display:flex;align-items:center;justify-content:center;margin:0 auto 12px}
+.rcp{padding:20px;font-family:"Courier New",monospace}
+.rrow{display:flex;justify-content:space-between;font-size:13px;margin:5px 0}
+.rdiv{border:none;border-top:1px dashed var(--bd);margin:10px 0}
+.rtot{font-weight:700;font-size:15px}
+@media print{body *{visibility:hidden}.printme,.printme *{visibility:visible}.printme{position:fixed;top:0;left:0;width:100%;font-family:"Courier New",monospace;padding:24px}.printme .rrow{display:flex;justify-content:space-between;margin:6px 0;font-size:14px}.printme .rdiv{border:none;border-top:1px dashed #ccc;margin:12px 0}.printme .rtot{font-weight:700;font-size:16px}}
+.toast{position:fixed;bottom:20px;right:20px;background:#1A1A2E;color:#fff;padding:10px 18px;border-radius:10px;font-size:13px;z-index:9999;box-shadow:0 8px 40px rgba(0,0,0,.2);display:none;max-width:280px}
+
+/* ===== TABLET (max 1024px) ===== */
+@media(max-width:1024px){
+  :root{--sb:200px}
+  .lbrand{padding:40px 32px}
+  .bname{font-size:42px}
+  .btag{font-size:16px;margin-bottom:32px}
+  .sg{grid-template-columns:repeat(3,1fr)}
+  .gg{grid-template-columns:repeat(2,1fr)}
+  .srch input{width:170px}
+}
+
+/* ===== TABLET PORTRAIT / LARGE MOBILE (max 768px) ===== */
+@media(max-width:768px){
+  /* Login - stack vertically */
+  #LP{grid-template-columns:1fr}
+  .lbrand{display:none}
+  .lcwrap{padding:24px 16px;min-height:100vh}
+  .lcard{padding:32px 24px;border-radius:16px}
+
+  /* Sidebar - slide in as drawer */
+  .sb{transform:translateX(-100%)}
+  .sb.open{transform:translateX(0)}
+
+  /* Main takes full width */
+  .mn{margin-left:0}
+  .hamburger{display:flex}
+  .tbd{display:none}
+
+  /* Topbar */
+  .tb{padding:12px 16px}
+  .tbt{font-size:16px}
+
+  /* Content */
+  .ct{padding:16px}
+
+  /* Stats - 2 columns */
+  .sg{grid-template-columns:repeat(2,1fr);gap:10px}
+  .sc{padding:14px;gap:10px}
+  .si{width:38px;height:38px;font-size:18px;border-radius:10px}
+  .sv{font-size:20px}
+
+  /* Section header - stack */
+  .sh{flex-direction:column;align-items:stretch;gap:10px}
+  .sa{justify-content:flex-start}
+  .srch input{width:100%;max-width:300px}
+
+  /* Table - full horizontal scroll */
+  table{min-width:480px}
+  thead th{padding:9px 12px;font-size:10px}
+  tbody td{padding:9px 12px;font-size:13px}
+
+  /* Gym grid - 1 col on small tablet */
+  .gg{grid-template-columns:1fr}
+
+  /* Modal */
+  .mb{max-height:95vh;border-radius:16px 16px 0 0;margin-top:auto}
+  .ov{align-items:flex-end;padding:0}
+  .fr2{grid-template-columns:1fr}
+  .dg{grid-template-columns:1fr 1fr}
+  .mf{justify-content:stretch}
+  .mf .btn{flex:1;justify-content:center}
+}
+
+/* ===== MOBILE (max 480px) ===== */
+@media(max-width:480px){
+  .lcard{padding:28px 20px}
+  .lcard h2{font-size:24px}
+
+  .ct{padding:12px}
+
+  /* Stats - 2 col compact */
+  .sg{grid-template-columns:repeat(2,1fr);gap:8px}
+  .sc{padding:12px;gap:8px;border-radius:10px}
+  .si{width:34px;height:34px;font-size:16px;border-radius:8px}
+  .sv{font-size:18px}
+  .sl{font-size:10px}
+
+  .cd{padding:14px}
+  .st{font-size:18px}
+
+  /* Topbar compact */
+  .tb{padding:10px 14px}
+  .tbt{font-size:15px}
+
+  /* Table scroll hint */
+  .tc::after{content:"Swipe to see more";display:block;text-align:center;font-size:11px;color:var(--txm);padding:6px;display:none}
+
+  /* Gym cards */
+  .ac2{padding:14px}
+  .anam{font-size:14px}
+
+  /* Sidebar width */
+  .sb{width:260px}
+
+  /* Toast bottom center */
+  .toast{left:50%;right:auto;transform:translateX(-50%);bottom:16px;white-space:nowrap}
+
+  /* Modal full width */
+  .mb{border-radius:12px 12px 0 0}
+  .mbod{padding:16px}
+  .mh{padding:14px 16px}
+  .mf{padding:12px 16px}
+  .fr2{grid-template-columns:1fr}
+  .dg{grid-template-columns:1fr}
+}
+
+/* ===== VERY SMALL (max 360px) ===== */
+@media(max-width:360px){
+  .sg{grid-template-columns:1fr 1fr}
+  .sv{font-size:16px}
+  .btn{padding:7px 12px;font-size:13px}
+  .tbt{font-size:14px}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div id="LP">
+  <div class="lbg"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div></div>
+  <div class="lbrand">
+    <div class="blogo">&#127947;</div>
+    <div class="bname">FitPro</div>
+    <div class="btag">Hospitality Management System</div>
+    <div class="bfeat">
+      <div class="bfi">&#10003; Customer Management</div>
+      <div class="bfi">&#10003; Product Inventory</div>
+      <div class="bfi">&#10003; Orders &amp; Billing</div>
+      <div class="bfi">&#10003; GYM Activities</div>
+    </div>
+  </div>
+  <div class="lcwrap">
+    <div class="lcard">
+      <h2>Welcome Back</h2>
+      <p>Sign in to your account to continue</p>
+      <div class="lerr" id="lerr">Invalid credentials! Use admin@gym.com / admin123</div>
+      <div class="fg"><label class="fl">Email Address</label><input id="em" class="fc" type="email" value="admin@gym.com" autocomplete="email"/></div>
+      <div class="fg"><label class="fl">Password</label><input id="pw" class="fc" type="password" value="admin123" autocomplete="current-password"/></div>
+      <button class="lbtn" id="lbtn">Sign In &#8594;</button>
+      <div class="lhint">Demo: admin@gym.com / admin123</div>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="DP">
+  <!-- Mobile overlay -->
+  <div class="sb-overlay" id="sbOverlay"></div>
+
+  <div class="lay">
+    <!-- SIDEBAR -->
+    <aside class="sb" id="sidebar">
+      <div class="sblogo">
+        <span style="font-size:26px">&#127947;</span>
+        <div><div class="ln">FitPro</div><div class="ls">Management</div></div>
+      </div>
+      <nav class="sbnav">
+        <button class="ni ac" id="nv-dashboard"><span class="nix">&#128202;</span><span class="nl">Dashboard</span></button>
+        <div class="ng">
+          <button class="ngh" id="grp-masters"><span class="nix">&#128193;</span><span class="nl">Masters</span><span class="chev op" id="cv-masters">&#8250;</span></button>
+          <div class="nch op" id="nc-masters">
+            <button class="ni" id="nv-customers"><span class="nix">&#128101;</span><span class="nl">Customers</span></button>
+            <button class="ni" id="nv-products"><span class="nix">&#128230;</span><span class="nl">Products</span></button>
+          </div>
+        </div>
+        <div class="ng">
+          <button class="ngh" id="grp-trans"><span class="nix">&#128179;</span><span class="nl">Transactions</span><span class="chev op" id="cv-trans">&#8250;</span></button>
+          <div class="nch op" id="nc-trans">
+            <button class="ni" id="nv-orders"><span class="nix">&#128722;</span><span class="nl">Orders</span></button>
+            <button class="ni" id="nv-billing"><span class="nix">&#129534;</span><span class="nl">Billing &amp; Receipts</span></button>
+          </div>
+        </div>
+        <button class="ni" id="nv-gym"><span class="nix">&#127947;</span><span class="nl">GYM Activities</span></button>
+      </nav>
+      <div class="sbfoot">
+        <div class="uav">A</div>
+        <div style="flex:1;min-width:0"><div class="un">Admin</div><div class="ur">admin</div></div>
+        <button class="lgbtn" id="logoutBtn" title="Logout">&#9099;</button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="mn" id="mainContent">
+      <header class="tb">
+        <div class="tb-left">
+          <button class="hamburger" id="hamburger">&#9776;</button>
+          <div><div class="tbt" id="ttl">Dashboard</div><div class="tbs" id="tsb">FitPro</div></div>
+        </div>
+        <div class="tbr">
+          <div class="tbd" id="tdt"></div>
+          <div style="display:flex;align-items:center;gap:8px;font-size:13px;font-weight:500"><div class="uav" style="width:30px;height:30px;font-size:12px">A</div><span style="white-space:nowrap">Admin</span></div>
+        </div>
+      </header>
+
+      <div class="ct">
+        <!-- DASHBOARD -->
+        <div class="sec ac" id="sec-dashboard">
+          <div class="sh"><div><div class="st">Dashboard Overview</div><div class="ss">Welcome back! Here is your FitPro summary.</div></div></div>
+          <div class="sg">
+            <div class="sc"><div class="si" style="background:#EEF2FF;color:#4F46E5">&#128101;</div><div><div class="sv">3</div><div class="sl">Customers</div></div></div>
+            <div class="sc"><div class="si" style="background:#FEF3C7;color:#D97706">&#128230;</div><div><div class="sv">5</div><div class="sl">Products</div></div></div>
+            <div class="sc"><div class="si" style="background:#D1FAE5;color:#059669">&#128722;</div><div><div class="sv">12</div><div class="sl">Orders</div></div></div>
+            <div class="sc"><div class="si" style="background:#FCE7F3;color:#DB2777">&#128176;</div><div><div class="sv">48,250</div><div class="sl">Revenue (Rs.)</div></div></div>
+            <div class="sc"><div class="si" style="background:#FEE2E2;color:#DC2626">&#127947;</div><div><div class="sv">10</div><div class="sl">GYM Activities</div></div></div>
+          </div>
+          <div class="cd">
+            <div class="cdh"><div class="cdt">Recent Orders</div></div>
+            <div class="tc"><table>
+              <thead><tr><th>Order ID</th><th>Customer</th><th>Amount</th><th>Status</th><th>Date</th></tr></thead>
+              <tbody>
+                <tr><td><strong>#ORD-0001</strong></td><td>Rahul Sharma</td><td>Rs.2,499</td><td><span class="bdg bsuc">completed</span></td><td>18/02/2026</td></tr>
+                <tr><td><strong>#ORD-0002</strong></td><td>Anita Patel</td><td>Rs.999</td><td><span class="bdg bwrn">pending</span></td><td>17/02/2026</td></tr>
+                <tr><td><strong>#ORD-0003</strong></td><td>Kiran Mehta</td><td>Rs.3,498</td><td><span class="bdg binf">processing</span></td><td>16/02/2026</td></tr>
+                <tr><td><strong>#ORD-0004</strong></td><td>Walk-in</td><td>Rs.599</td><td><span class="bdg berr">cancelled</span></td><td>15/02/2026</td></tr>
+              </tbody>
+            </table></div>
+          </div>
+        </div>
+
+        <!-- CUSTOMERS -->
+        <div class="sec" id="sec-customers">
+          <div class="sh">
+            <div><div class="st">Customers</div><div class="ss">3 total customers</div></div>
+            <div class="sa"><div class="srch"><span class="sico">&#128269;</span><input id="csrch" placeholder="Search customers..."/></div><button class="btn bp" id="addCustBtn">+ Add Customer</button></div>
+          </div>
+          <div class="cd"><div class="tc"><table>
+            <thead><tr><th>#</th><th>Name</th><th>Phone</th><th>Email</th><th>Membership</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="ctb">
+              <tr><td>1</td><td><strong>Rahul Sharma</strong></td><td>9876543210</td><td>rahul@email.com</td><td><span class="bdg bpre">premium</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vc" data-name="Rahul Sharma" data-email="rahul@email.com" data-phone="9876543210" data-addr="12 MG Road, Mumbai" data-mem="premium" data-st="active">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ec" data-name="Rahul Sharma" data-email="rahul@email.com" data-phone="9876543210" data-addr="12 MG Road, Mumbai" data-mem="premium" data-st="active">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Rahul Sharma">&#128465;</button></div></td></tr>
+              <tr><td>2</td><td><strong>Anita Patel</strong></td><td>9123456789</td><td>anita@email.com</td><td><span class="bdg bbsc">basic</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vc" data-name="Anita Patel" data-email="anita@email.com" data-phone="9123456789" data-addr="45 Link Road, Delhi" data-mem="basic" data-st="active">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ec" data-name="Anita Patel" data-email="anita@email.com" data-phone="9123456789" data-addr="45 Link Road, Delhi" data-mem="basic" data-st="active">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Anita Patel">&#128465;</button></div></td></tr>
+              <tr><td>3</td><td><strong>Kiran Mehta</strong></td><td>9988776655</td><td>kiran@email.com</td><td><span class="bdg bvip">vip</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vc" data-name="Kiran Mehta" data-email="kiran@email.com" data-phone="9988776655" data-addr="78 Park Street, Pune" data-mem="vip" data-st="active">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ec" data-name="Kiran Mehta" data-email="kiran@email.com" data-phone="9988776655" data-addr="78 Park Street, Pune" data-mem="vip" data-st="active">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Kiran Mehta">&#128465;</button></div></td></tr>
+            </tbody>
+          </table></div></div>
+        </div>
+
+        <!-- PRODUCTS -->
+        <div class="sec" id="sec-products">
+          <div class="sh">
+            <div><div class="st">Products</div><div class="ss">5 total products</div></div>
+            <div class="sa"><div class="srch"><span class="sico">&#128269;</span><input id="psrch" placeholder="Search products..."/></div><button class="btn bp" id="addProdBtn">+ Add Product</button></div>
+          </div>
+          <div class="cd"><div class="tc"><table>
+            <thead><tr><th>#</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody id="ptb">
+              <tr><td>1</td><td><strong>Whey Protein 1kg</strong></td><td>Supplements</td><td><strong>Rs.2,499</strong></td><td><span class="bdg bsuc">50 units</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ep">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Whey Protein">&#128465;</button></div></td></tr>
+              <tr><td>2</td><td><strong>Yoga Mat</strong></td><td>Equipment</td><td><strong>Rs.999</strong></td><td><span class="bdg bsuc">30 units</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ep">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Yoga Mat">&#128465;</button></div></td></tr>
+              <tr><td>3</td><td><strong>Resistance Bands</strong></td><td>Equipment</td><td><strong>Rs.599</strong></td><td><span class="bdg bwrn">8 units</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ep">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Resistance Bands">&#128465;</button></div></td></tr>
+              <tr><td>4</td><td><strong>Water Bottle</strong></td><td>Accessories</td><td><strong>Rs.299</strong></td><td><span class="bdg bsuc">100 units</span></td><td><span class="bdg bsuc">active</span></td><td><div class="ab"><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ep">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Water Bottle">&#128465;</button></div></td></tr>
+              <tr><td>5</td><td><strong>Gym Gloves</strong></td><td>Accessories</td><td><strong>Rs.449</strong></td><td><span class="bdg berr">0 units</span></td><td><span class="bdg berr">inactive</span></td><td><div class="ab"><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="ep">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="Gym Gloves">&#128465;</button></div></td></tr>
+            </tbody>
+          </table></div></div>
+        </div>
+
+        <!-- ORDERS -->
+        <div class="sec" id="sec-orders">
+          <div class="sh"><div><div class="st">Orders</div><div class="ss">12 total orders</div></div><div class="sa"><div class="srch"><span class="sico">&#128269;</span><input placeholder="Search orders..."/></div></div></div>
+          <div class="cd"><div class="tc"><table>
+            <thead><tr><th>Order ID</th><th>Customer</th><th>Date</th><th>Amount</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>#ORD-0001</strong></td><td>Rahul Sharma</td><td>18/02/2026</td><td><strong>Rs.2,499</strong></td><td><span class="bdg bsuc">completed</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vo">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eo">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="#ORD-0001">&#128465;</button></div></td></tr>
+              <tr><td><strong>#ORD-0002</strong></td><td>Anita Patel</td><td>17/02/2026</td><td><strong>Rs.999</strong></td><td><span class="bdg bwrn">pending</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vo">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eo">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="#ORD-0002">&#128465;</button></div></td></tr>
+              <tr><td><strong>#ORD-0003</strong></td><td>Kiran Mehta</td><td>16/02/2026</td><td><strong>Rs.3,498</strong></td><td><span class="bdg binf">processing</span></td><td><div class="ab"><button class="bic" style="background:#EEF2FF;color:#4F46E5" data-a="vo">&#128065;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eo">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="#ORD-0003">&#128465;</button></div></td></tr>
+            </tbody>
+          </table></div></div>
+        </div>
+
+        <!-- BILLING -->
+        <div class="sec" id="sec-billing">
+          <div class="sh">
+            <div><div class="st">Billing &amp; Receipts</div><div class="ss">8 total bills</div></div>
+            <div class="sa"><div class="srch"><span class="sico">&#128269;</span><input placeholder="Search bills..."/></div><button class="btn bp" id="addBillBtn">+ New Bill</button></div>
+          </div>
+          <div class="cd"><div class="tc"><table>
+            <thead><tr><th>Invoice</th><th>Customer</th><th>Date</th><th>Total</th><th>Method</th><th>Status</th><th>Actions</th></tr></thead>
+            <tbody>
+              <tr><td><strong>INV-20260218-1042</strong></td><td>Rahul Sharma</td><td>18/02/2026</td><td><strong>Rs.2,624</strong></td><td>UPI</td><td><span class="bdg bsuc">paid</span></td><td><div class="ab"><button class="bic" style="background:#D1FAE5;color:#059669" data-a="rcp">&#128424;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eb">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="INV-1042">&#128465;</button></div></td></tr>
+              <tr><td><strong>INV-20260217-3381</strong></td><td>Anita Patel</td><td>17/02/2026</td><td><strong>Rs.1,048</strong></td><td>Cash</td><td><span class="bdg bwrn">pending</span></td><td><div class="ab"><button class="bic" style="background:#D1FAE5;color:#059669" data-a="rcp">&#128424;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eb">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="INV-3381">&#128465;</button></div></td></tr>
+              <tr><td><strong>INV-20260216-7720</strong></td><td>Kiran Mehta</td><td>16/02/2026</td><td><strong>Rs.3,673</strong></td><td>Card</td><td><span class="bdg bsuc">paid</span></td><td><div class="ab"><button class="bic" style="background:#D1FAE5;color:#059669" data-a="rcp">&#128424;</button><button class="bic" style="background:#FEF3C7;color:#D97706" data-a="eb">&#9999;</button><button class="bic" style="background:#FEE2E2;color:#DC2626" data-a="del" data-name="INV-7720">&#128465;</button></div></td></tr>
+            </tbody>
+          </table></div></div>
+        </div>
+
+        <!-- GYM -->
+        <div class="sec" id="sec-gym">
+          <div class="sh">
+            <div><div class="st">GYM Activities</div><div class="ss">10 activities available</div></div>
+            <div class="sa"><div class="srch"><span class="sico">&#128269;</span><input id="gsrch" placeholder="Search activities..."/></div><button class="btn bp" id="addGymBtn">+ Add Activity</button></div>
+          </div>
+          <div class="gg" id="gymgrid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PRINT AREA -->
+<div class="printme" id="printArea" style="display:none">
+  <div style="text-align:center;margin-bottom:16px"><div style="font-size:32px">&#127947;</div><div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800">FitPro GYM</div><div style="font-size:12px;color:#666;margin-top:4px">Invoice: INV-20260218-1042 | 18/02/2026</div></div>
+  <hr class="rdiv"/><div class="rrow"><span>Customer:</span><span>Rahul Sharma</span></div><div class="rrow"><span>Payment:</span><span>UPI</span></div><hr class="rdiv"/>
+  <div class="rrow"><span>Subtotal:</span><span>Rs.2,499</span></div><div class="rrow"><span>Tax (5%):</span><span>Rs.125</span></div><div class="rrow"><span>Discount:</span><span>Rs.0</span></div>
+  <hr class="rdiv"/><div class="rrow rtot"><span>TOTAL:</span><span>Rs.2,624</span></div>
+  <div style="text-align:center;margin-top:16px;font-size:12px;color:#666">Thank you for choosing FitPro GYM!</div>
+</div>
+
+<!-- MODALS -->
+<div class="ov" id="m-addcust" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Add New Customer</span><button class="mc" data-close="m-addcust">&#10005;</button></div><div class="mbod"><div class="fr2"><div class="fg"><label class="fl">Full Name *</label><input class="fc" placeholder="Rahul Sharma"/></div><div class="fg"><label class="fl">Phone</label><input class="fc" placeholder="9876543210"/></div></div><div class="fg"><label class="fl">Email</label><input class="fc" type="email" placeholder="rahul@email.com"/></div><div class="fg"><label class="fl">Address</label><textarea class="fc" placeholder="Full address..."></textarea></div><div class="fg"><label class="fl">Membership Type</label><select class="fc"><option value="basic">Basic</option><option value="premium">Premium</option><option value="vip">VIP</option></select></div></div><div class="mf"><button class="btn bs" data-close="m-addcust">Cancel</button><button class="btn bp" data-toast="Customer added!" data-close="m-addcust">Add Customer</button></div></div></div>
+
+<div class="ov" id="m-viewcust" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Customer Details</span><button class="mc" data-close="m-viewcust">&#10005;</button></div><div class="mbod" style="text-align:center"><div class="dav" id="vc-av"></div><div style="font-family:Syne,sans-serif;font-size:18px;font-weight:700;margin-bottom:8px" id="vc-name"></div><span class="bdg" id="vc-mem"></span><div class="dg"><div class="di"><span class="dl">Email</span><span id="vc-email"></span></div><div class="di"><span class="dl">Phone</span><span id="vc-phone"></span></div><div class="di"><span class="dl">Address</span><span id="vc-addr"></span></div><div class="di"><span class="dl">Status</span><span id="vc-st"></span></div></div></div><div class="mf"><button class="btn bs" data-close="m-viewcust">Close</button></div></div></div>
+
+<div class="ov" id="m-editcust" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Edit Customer</span><button class="mc" data-close="m-editcust">&#10005;</button></div><div class="mbod"><div class="fr2"><div class="fg"><label class="fl">Full Name *</label><input class="fc" id="ec-name"/></div><div class="fg"><label class="fl">Phone</label><input class="fc" id="ec-phone"/></div></div><div class="fg"><label class="fl">Email</label><input class="fc" id="ec-email" type="email"/></div><div class="fg"><label class="fl">Address</label><textarea class="fc" id="ec-addr"></textarea></div><div class="fr2"><div class="fg"><label class="fl">Membership</label><select class="fc" id="ec-mem"><option value="basic">Basic</option><option value="premium">Premium</option><option value="vip">VIP</option></select></div><div class="fg"><label class="fl">Status</label><select class="fc" id="ec-st"><option value="active">Active</option><option value="inactive">Inactive</option></select></div></div></div><div class="mf"><button class="btn bs" data-close="m-editcust">Cancel</button><button class="btn bp" data-toast="Customer updated!" data-close="m-editcust">Update</button></div></div></div>
+
+<div class="ov" id="m-addprod" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Add / Edit Product</span><button class="mc" data-close="m-addprod">&#10005;</button></div><div class="mbod"><div class="fr2"><div class="fg"><label class="fl">Product Name *</label><input class="fc" placeholder="Whey Protein 1kg"/></div><div class="fg"><label class="fl">Category</label><select class="fc"><option value="">Select</option><option>Supplements</option><option>Equipment</option><option>Accessories</option><option>Apparel</option></select></div></div><div class="fr2"><div class="fg"><label class="fl">Price (Rs.) *</label><input type="number" class="fc" placeholder="999"/></div><div class="fg"><label class="fl">Stock Qty</label><input type="number" class="fc" placeholder="50"/></div></div><div class="fg"><label class="fl">Description</label><textarea class="fc" placeholder="Description..."></textarea></div></div><div class="mf"><button class="btn bs" data-close="m-addprod">Cancel</button><button class="btn bp" data-toast="Product saved!" data-close="m-addprod">Save Product</button></div></div></div>
+
+<div class="ov" id="m-orddet" style="display:none"><div class="mb" style="max-width:700px"><div class="mh"><span class="mt2">Order Details</span><button class="mc" data-close="m-orddet">&#10005;</button></div><div class="mbod"><div class="fr2" style="margin-bottom:14px;font-size:14px"><div><strong>Customer:</strong> Rahul Sharma</div><div><strong>Status:</strong> <span class="bdg bsuc">completed</span></div></div><div class="tc"><table><thead><tr><th>Product</th><th>Qty</th><th>Unit Price</th><th>Subtotal</th></tr></thead><tbody><tr><td>Whey Protein 1kg</td><td>1</td><td>Rs.2,499</td><td>Rs.2,499</td></tr></tbody></table></div><div style="text-align:right;margin-top:12px;font-size:16px;font-weight:700">Total: Rs.2,499</div></div><div class="mf"><button class="btn bs" data-close="m-orddet">Close</button></div></div></div>
+
+<div class="ov" id="m-ordsts" style="display:none"><div class="mb" style="max-width:360px"><div class="mh"><span class="mt2">Update Order Status</span><button class="mc" data-close="m-ordsts">&#10005;</button></div><div class="mbod"><p style="margin-bottom:14px">Change status for <strong>#ORD-0001</strong></p><div class="fg"><label class="fl">Status</label><select class="fc"><option>pending</option><option>processing</option><option selected>completed</option><option>cancelled</option></select></div></div><div class="mf"><button class="btn bs" data-close="m-ordsts">Cancel</button><button class="btn bp" data-toast="Order updated!" data-close="m-ordsts">Update</button></div></div></div>
+
+<div class="ov" id="m-addbill" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Create / Edit Bill</span><button class="mc" data-close="m-addbill">&#10005;</button></div><div class="mbod"><div class="fg"><label class="fl">Customer</label><select class="fc"><option value="">Walk-in</option><option>Rahul Sharma</option><option>Anita Patel</option><option>Kiran Mehta</option></select></div><div class="fr2"><div class="fg"><label class="fl">Subtotal (Rs.) *</label><input type="number" class="fc" id="bs" placeholder="2499"/></div><div class="fg"><label class="fl">Tax (Rs.)</label><input type="number" class="fc" id="bt" placeholder="125"/></div></div><div class="fr2"><div class="fg"><label class="fl">Discount (Rs.)</label><input type="number" class="fc" id="bd3" value="0"/></div><div class="fg"><label class="fl">Total (Rs.)</label><input class="fc" id="btot" readonly style="background:#f8f7ff;font-weight:700"/></div></div><div class="fg"><label class="fl">Payment Method</label><select class="fc"><option>cash</option><option>card</option><option>online</option><option>upi</option></select></div></div><div class="mf"><button class="btn bs" data-close="m-addbill">Cancel</button><button class="btn bp" data-toast="Bill created!" data-close="m-addbill">Save Bill</button></div></div></div>
+
+<div class="ov" id="m-receipt" style="display:none"><div class="mb" style="max-width:400px"><div class="mh"><span class="mt2">Receipt</span><button class="mc" data-close="m-receipt">&#10005;</button></div><div class="rcp"><div style="text-align:center;margin-bottom:14px"><div style="font-size:32px">&#127947;</div><div style="font-family:Syne,sans-serif;font-size:20px;font-weight:800">FitPro GYM</div><div style="font-size:12px;color:#666;margin-top:4px">Invoice: INV-20260218-1042 | 18/02/2026</div></div><hr class="rdiv"/><div class="rrow"><span>Customer:</span><span>Rahul Sharma</span></div><div class="rrow"><span>Payment:</span><span>UPI</span></div><hr class="rdiv"/><div class="rrow"><span>Subtotal:</span><span>Rs.2,499</span></div><div class="rrow"><span>Tax (5%):</span><span>Rs.125</span></div><div class="rrow"><span>Discount:</span><span>Rs.0</span></div><hr class="rdiv"/><div class="rrow rtot"><span>TOTAL:</span><span>Rs.2,624</span></div><div style="text-align:center;margin-top:14px;font-size:12px;color:#666">Thank you for choosing FitPro GYM! Stay Fit.</div></div><div class="mf"><button class="btn bs" data-close="m-receipt">Close</button><button class="btn bg2" id="printBtn">&#128424; Print</button></div></div></div>
+
+<div class="ov" id="m-addgym" style="display:none"><div class="mb"><div class="mh"><span class="mt2">Add GYM Activity</span><button class="mc" data-close="m-addgym">&#10005;</button></div><div class="mbod"><div class="fr2"><div class="fg"><label class="fl">Activity Name *</label><input class="fc" placeholder="e.g. Yoga"/></div><div class="fg"><label class="fl">Category</label><select class="fc"><option value="">Select</option><option>Mind and Body</option><option>Cardio</option><option>Strength</option><option>HIIT</option><option>Combat Sports</option></select></div></div><div class="fg"><label class="fl">Description</label><textarea class="fc" placeholder="Activity description..."></textarea></div><div class="fr2"><div class="fg"><label class="fl">Duration (mins)</label><input type="number" class="fc" placeholder="60"/></div><div class="fg"><label class="fl">Capacity</label><input type="number" class="fc" placeholder="20"/></div></div><div class="fr2"><div class="fg"><label class="fl">Trainer</label><input class="fc" placeholder="Trainer name"/></div><div class="fg"><label class="fl">Schedule</label><input class="fc" placeholder="Mon-Wed-Fri 7:00 AM"/></div></div></div><div class="mf"><button class="btn bs" data-close="m-addgym">Cancel</button><button class="btn bp" data-toast="Activity added!" data-close="m-addgym">Add Activity</button></div></div></div>
+
+<div class="ov" id="m-del" style="display:none"><div class="mb" style="max-width:380px"><div class="mh"><span class="mt2">Confirm Delete</span><button class="mc" data-close="m-del">&#10005;</button></div><div class="mbod"><p>Are you sure you want to delete <strong id="del-name"></strong>? This cannot be undone.</p></div><div class="mf"><button class="btn bs" data-close="m-del">Cancel</button><button class="btn bd2" data-toast="Deleted!" data-close="m-del">Delete</button></div></div></div>
+
+<div class="toast" id="toastEl"></div>
+
+<script>
+(function() {
+  var gymData = [
+    {n:"Yoga",c:"Mind and Body",d:"Relaxing yoga for flexibility",dur:60,t:"Priya Sharma",cap:15,s:"Mon-Wed-Fri 7:00 AM",st:"active",col:"#7C3AED"},
+    {n:"Zumba",c:"Cardio",d:"High energy dance fitness",dur:45,t:"Rohan Mehta",cap:20,s:"Tue-Thu 6:00 PM",st:"active",col:"#EF4444"},
+    {n:"Weight Training",c:"Strength",d:"Guided weight and resistance training",dur:90,t:"Arjun Singh",cap:10,s:"Daily 8:00 AM",st:"active",col:"#F59E0B"},
+    {n:"Crossfit",c:"HIIT",d:"High intensity functional fitness",dur:60,t:"Vikram Patel",cap:12,s:"Mon-Wed-Sat 6:00 AM",st:"active",col:"#10B981"},
+    {n:"Swimming",c:"Cardio",d:"Swimming training and water aerobics",dur:60,t:"Sunita Rao",cap:8,s:"Daily 6:00 AM",st:"active",col:"#EF4444"},
+    {n:"Boxing",c:"Combat Sports",d:"Boxing and kickboxing fitness",dur:75,t:"Ravi Kumar",cap:10,s:"Tue-Thu-Sat 5:00 PM",st:"active",col:"#3B82F6"},
+    {n:"Pilates",c:"Mind and Body",d:"Core strengthening and alignment",dur:50,t:"Meera Joshi",cap:12,s:"Mon-Wed-Fri 9:00 AM",st:"active",col:"#7C3AED"},
+    {n:"Cycling",c:"Cardio",d:"Indoor cycling and spinning classes",dur:45,t:"Anil Verma",cap:20,s:"Daily 7:00 AM",st:"active",col:"#EF4444"},
+    {n:"Aerobics",c:"Cardio",d:"Classic aerobic fitness classes",dur:50,t:"Pooja Gupta",cap:25,s:"Mon-Wed-Fri 5:00 PM",st:"active",col:"#EF4444"},
+    {n:"Martial Arts",c:"Combat Sports",d:"Karate and self-defense training",dur:90,t:"Suresh Nair",cap:15,s:"Tue-Thu 7:00 PM",st:"inactive",col:"#3B82F6"}
+  ];
+
+  function renderGym(list) {
+    var g = document.getElementById("gymgrid");
+    if (!list) list = gymData;
+    if (!list.length) { g.innerHTML = "<p style='color:#9CA3AF;text-align:center;padding:40px;grid-column:1/-1'>No activities found</p>"; return; }
+    var h = "";
+    for (var i = 0; i < list.length; i++) {
+      var a = list[i];
+      h += "<div class='ac2' style='border-top-color:" + a.col + "'>";
+      h += "<div class='ach'><div class='anam'>" + a.n + "</div><span class='acat' style='background:" + a.col + "22;color:" + a.col + "'>" + a.c + "</span></div>";
+      h += "<p style='font-size:13px;color:#6B7280;margin-bottom:10px'>" + a.d + "</p>";
+      h += "<div class='ainf'><span>Trainer: " + a.t + "</span><span>Duration: " + a.dur + " mins</span><span>Capacity: " + a.cap + "</span><span>Schedule: " + a.s + "</span></div>";
+      h += "<div class='af'><span class='bdg " + (a.st === "active" ? "bsuc" : "berr") + "'>" + a.st + "</span>";
+      h += "<div class='ab'><button class='bic' style='background:#FEF3C7;color:#D97706' data-a='eg'>&#9999;</button>";
+      h += "<button class='bic' style='background:#FEE2E2;color:#DC2626' data-a='del' data-name='" + a.n + "'>&#128465;</button></div></div></div>";
+    }
+    g.innerHTML = h;
+  }
+
+  var toastTimer;
+  function showToast(msg) {
+    var el = document.getElementById("toastEl");
+    el.textContent = msg;
+    el.style.display = "block";
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(function() { el.style.display = "none"; }, 3000);
+  }
+
+  function openModal(id) { document.getElementById(id).style.display = "flex"; }
+  function closeModal(id) { document.getElementById(id).style.display = "none"; }
+
+  // Sidebar open/close for mobile
+  function openSidebar() {
+    document.getElementById("sidebar").classList.add("open");
+    document.getElementById("sbOverlay").classList.add("show");
+    document.body.style.overflow = "hidden";
+  }
+  function closeSidebar() {
+    document.getElementById("sidebar").classList.remove("open");
+    document.getElementById("sbOverlay").classList.remove("show");
+    document.body.style.overflow = "";
+  }
+
+  var TITLES = {dashboard:"Dashboard",customers:"Customers",products:"Products",orders:"Orders",billing:"Billing & Receipts",gym:"GYM Activities"};
+  function showSec(s) {
+    document.querySelectorAll(".sec").forEach(function(x) { x.classList.remove("ac"); });
+    document.querySelectorAll(".ni").forEach(function(x) { x.classList.remove("ac"); });
+    var sec = document.getElementById("sec-" + s);
+    if (sec) sec.classList.add("ac");
+    var nav = document.getElementById("nv-" + s);
+    if (nav) nav.classList.add("ac");
+    document.getElementById("ttl").textContent = TITLES[s] || s;
+    document.getElementById("tsb").textContent = "FitPro - " + (TITLES[s] || s);
+    // Auto close sidebar on mobile after navigation
+    if (window.innerWidth <= 768) closeSidebar();
+  }
+
+  function doLogin() {
+    var email = document.getElementById("em").value.trim();
+    var pass = document.getElementById("pw").value;
+    if (email === "admin@gym.com" && pass === "admin123") {
+      document.getElementById("lerr").style.display = "none";
+      document.getElementById("LP").style.display = "none";
+      document.getElementById("DP").style.display = "block";
+    } else {
+      document.getElementById("lerr").style.display = "block";
+    }
+  }
+
+  function toggleGrp(c, v) {
+    var ce = document.getElementById(c), ve = document.getElementById(v);
+    if (ce) ce.classList.toggle("op");
+    if (ve) ve.classList.toggle("op");
+  }
+
+  function viewCust(b) {
+    var name = b.getAttribute("data-name");
+    document.getElementById("vc-av").textContent = name.charAt(0);
+    document.getElementById("vc-name").textContent = name;
+    var mem = b.getAttribute("data-mem");
+    var mel = document.getElementById("vc-mem");
+    mel.textContent = mem.toUpperCase();
+    mel.className = "bdg " + (mem === "premium" ? "bpre" : mem === "vip" ? "bvip" : "bbsc");
+    document.getElementById("vc-email").textContent = b.getAttribute("data-email");
+    document.getElementById("vc-phone").textContent = b.getAttribute("data-phone");
+    document.getElementById("vc-addr").textContent = b.getAttribute("data-addr");
+    var st = b.getAttribute("data-st");
+    document.getElementById("vc-st").innerHTML = "<span class='bdg " + (st === "active" ? "bsuc" : "berr") + "'>" + st + "</span>";
+    openModal("m-viewcust");
+  }
+
+  function editCust(b) {
+    document.getElementById("ec-name").value = b.getAttribute("data-name");
+    document.getElementById("ec-email").value = b.getAttribute("data-email");
+    document.getElementById("ec-phone").value = b.getAttribute("data-phone");
+    document.getElementById("ec-addr").value = b.getAttribute("data-addr");
+    document.getElementById("ec-mem").value = b.getAttribute("data-mem");
+    document.getElementById("ec-st").value = b.getAttribute("data-st");
+    openModal("m-editcust");
+  }
+
+  function calcBill() {
+    var s = parseFloat(document.getElementById("bs").value) || 0;
+    var t = parseFloat(document.getElementById("bt").value) || 0;
+    var d = parseFloat(document.getElementById("bd3").value) || 0;
+    document.getElementById("btot").value = (s + t - d).toFixed(2);
+  }
+
+  function filterTable(val, id) {
+    var v = val.toLowerCase();
+    document.querySelectorAll("#" + id + " tr").forEach(function(r) {
+      r.style.display = r.textContent.toLowerCase().indexOf(v) > -1 ? "" : "none";
+    });
+  }
+
+  // INIT
+  document.getElementById("tdt").textContent = new Date().toLocaleDateString("en-IN", {weekday:"long",year:"numeric",month:"long",day:"numeric"});
+  renderGym();
+
+  // Overlay + hamburger
+  document.getElementById("sbOverlay").addEventListener("click", closeSidebar);
+  document.getElementById("hamburger").addEventListener("click", openSidebar);
+
+  document.querySelectorAll(".ov").forEach(function(ov) {
+    ov.addEventListener("click", function(e) { if (e.target === ov) ov.style.display = "none"; });
+  });
+  document.getElementById("em").addEventListener("keydown", function(e) { if (e.key === "Enter") doLogin(); });
+  document.getElementById("pw").addEventListener("keydown", function(e) { if (e.key === "Enter") doLogin(); });
+  document.getElementById("bs").addEventListener("input", calcBill);
+  document.getElementById("bt").addEventListener("input", calcBill);
+  document.getElementById("bd3").addEventListener("input", calcBill);
+  document.getElementById("csrch").addEventListener("input", function() { filterTable(this.value, "ctb"); });
+  document.getElementById("psrch").addEventListener("input", function() { filterTable(this.value, "ptb"); });
+  document.getElementById("gsrch").addEventListener("input", function() {
+    var v = this.value.toLowerCase();
+    renderGym(gymData.filter(function(a) { return a.n.toLowerCase().indexOf(v) > -1 || a.c.toLowerCase().indexOf(v) > -1; }));
+  });
+
+  // UNIFIED CLICK HANDLER using closest()
+  document.addEventListener("click", function(e) {
+    var t = e.target;
+    var idEl = t.closest("[id]");
+    var id = idEl ? idEl.id : "";
+
+    if (id === "lbtn")         { doLogin(); return; }
+    if (id === "logoutBtn")    { document.getElementById("DP").style.display = "none"; document.getElementById("LP").style.display = "grid"; return; }
+    if (id === "nv-dashboard") { showSec("dashboard"); return; }
+    if (id === "nv-customers") { showSec("customers"); return; }
+    if (id === "nv-products")  { showSec("products");  return; }
+    if (id === "nv-orders")    { showSec("orders");    return; }
+    if (id === "nv-billing")   { showSec("billing");   return; }
+    if (id === "nv-gym")       { showSec("gym");       return; }
+    if (id === "grp-masters")  { toggleGrp("nc-masters","cv-masters"); return; }
+    if (id === "grp-trans")    { toggleGrp("nc-trans","cv-trans"); return; }
+    if (id === "addCustBtn")   { openModal("m-addcust"); return; }
+    if (id === "addProdBtn")   { openModal("m-addprod"); return; }
+    if (id === "addBillBtn")   { openModal("m-addbill"); return; }
+    if (id === "addGymBtn")    { openModal("m-addgym");  return; }
+    if (id === "printBtn")     { window.print(); return; }
+
+    var closeEl = t.closest("[data-close]");
+    var toastEl = t.closest("[data-toast]");
+    if (toastEl) { showToast(toastEl.getAttribute("data-toast")); }
+    if (closeEl) { closeModal(closeEl.getAttribute("data-close")); return; }
+
+    var actEl = t.closest("[data-a]");
+    if (!actEl) return;
+    var action = actEl.getAttribute("data-a");
+    if (action === "vc")  { viewCust(actEl); return; }
+    if (action === "ec")  { editCust(actEl); return; }
+    if (action === "ep")  { openModal("m-addprod"); return; }
+    if (action === "vo")  { openModal("m-orddet");  return; }
+    if (action === "eo")  { openModal("m-ordsts");  return; }
+    if (action === "eb")  { openModal("m-addbill"); return; }
+    if (action === "eg")  { openModal("m-addgym");  return; }
+    if (action === "rcp") { openModal("m-receipt"); return; }
+    if (action === "del") {
+      document.getElementById("del-name").textContent = actEl.getAttribute("data-name") || "this item";
+      openModal("m-del");
+      return;
+    }
+  });
+})();
+</script>
+</body>
+</html>
