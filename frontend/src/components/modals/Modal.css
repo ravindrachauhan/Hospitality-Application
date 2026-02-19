@@ -1,0 +1,56 @@
+.section-content { width: 100%; }
+
+.section-header {
+  display: flex; align-items: flex-start; justify-content: space-between;
+  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+}
+.section-title { font-family: var(--font-display); font-size: 22px; font-weight: 800; }
+.section-sub { color: var(--text-secondary); font-size: 13px; margin-top: 2px; }
+.section-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+
+.action-btns { display: flex; gap: 6px; align-items: center; }
+
+.empty-row { text-align: center; padding: 32px !important; color: var(--text-muted); }
+
+.loading-state {
+  display: flex; justify-content: center; align-items: center; min-height: 200px;
+}
+
+/* Detail Modal */
+.detail-card { padding: 24px; text-align: center; }
+.detail-avatar {
+  width: 72px; height: 72px; border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary), var(--primary-light));
+  color: white; font-size: 28px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin: 0 auto 12px;
+}
+.detail-name { font-family: var(--font-display); font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; text-align: left; }
+.detail-item { background: var(--surface-alt); border-radius: 10px; padding: 12px 16px; }
+.detail-label { display: block; font-size: 11px; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; }
+
+/* Activity Cards for GYM */
+.gym-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+.activity-card {
+  background: white; border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow); border-top: 4px solid var(--primary);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.activity-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-lg); }
+.activity-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+.activity-name { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
+.activity-category { font-size: 11px; background: #EEF2FF; color: #4F46E5; padding: 3px 10px; border-radius: 20px; font-weight: 600; }
+.activity-info { display: flex; flex-direction: column; gap: 6px; font-size: 13px; color: var(--text-secondary); }
+.activity-info span { display: flex; align-items: center; gap: 8px; }
+.activity-card-footer { margin-top: 14px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+
+/* Receipt print area */
+.receipt-area { padding: 24px; }
+.receipt-header { text-align: center; margin-bottom: 24px; }
+.receipt-title { font-family: var(--font-display); font-size: 24px; font-weight: 800; }
+.receipt-invoice { color: var(--text-secondary); font-size: 13px; }
+.receipt-divider { border: none; border-top: 1px dashed var(--border); margin: 16px 0; }
+.receipt-row { display: flex; justify-content: space-between; font-size: 14px; margin-bottom: 8px; }
+.receipt-total { font-weight: 700; font-size: 16px; }
+.receipt-footer { text-align: center; margin-top: 24px; color: var(--text-secondary); font-size: 12px; }
